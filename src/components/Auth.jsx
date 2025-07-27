@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CloseOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
 const Auth = ({ visible, onClose }) => {
   const [activeTab, setActiveTab] = useState("login");
-  const navigate = window.reactRouterNavigate || (() => {});
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [signupData, setSignupData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    password: "",
+    confirmPassword: "",
+    accepted: false,
+  });
 
   // Helper to get name from signup form
   function handleSignup(e) {
     e.preventDefault();
-    const form = e.target;
-    const firstName = form[1].value;
-    const lastName = form[2].value;
-    const name = `${firstName} ${lastName}`;
+    const name = `${signupData.firstName} ${signupData.lastName}`;
     localStorage.setItem("registeredName", name);
     localStorage.setItem("isLoggedIn", "true");
     window.location.href = "/welcome";
@@ -21,10 +27,7 @@ const Auth = ({ visible, onClose }) => {
 
   function handleLogin(e) {
     e.preventDefault();
-    const form = e.target;
-    const email = form[0].value;
-    // Use email as name if no registeredName
-    localStorage.setItem("registeredName", email);
+    localStorage.setItem("registeredName", loginData.email);
     localStorage.setItem("isLoggedIn", "true");
     window.location.href = "/welcome";
     if (onClose) onClose();
@@ -86,19 +89,34 @@ const Auth = ({ visible, onClose }) => {
                   placeholder="Email"
                   className="border rounded px-3 py-2"
                   required
+                  value={loginData.email}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, email: e.target.value })
+                  }
                 />
                 <input
                   type="password"
                   placeholder="Password"
                   className="border rounded px-3 py-2"
                   required
+                  value={loginData.password}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, password: e.target.value })
+                  }
                 />
-                <button
-                  type="submit"
-                  className="bg-black text-white font-semibold py-2 rounded"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="!bg-black !text-white !border-none !font-semibold !py-2 !rounded"
+                  disabled={!(loginData.email && loginData.password)}
+                  style={{
+                    backgroundColor: "black",
+                    color: "white",
+                    border: "none",
+                  }}
                 >
                   Login
-                </button>
+                </Button>
               </form>
             ) : (
               <form
@@ -110,6 +128,10 @@ const Auth = ({ visible, onClose }) => {
                   placeholder="Email"
                   className="border rounded px-3 py-2"
                   required
+                  value={signupData.email}
+                  onChange={(e) =>
+                    setSignupData({ ...signupData, email: e.target.value })
+                  }
                 />
                 <div className="flex gap-2">
                   <input
@@ -117,12 +139,23 @@ const Auth = ({ visible, onClose }) => {
                     placeholder="First Name"
                     className="border rounded px-3 py-2 w-1/2"
                     required
+                    value={signupData.firstName}
+                    onChange={(e) =>
+                      setSignupData({
+                        ...signupData,
+                        firstName: e.target.value,
+                      })
+                    }
                   />
                   <input
                     type="text"
                     placeholder="Last Name"
                     className="border rounded px-3 py-2 w-1/2"
                     required
+                    value={signupData.lastName}
+                    onChange={(e) =>
+                      setSignupData({ ...signupData, lastName: e.target.value })
+                    }
                   />
                 </div>
                 <input
@@ -130,21 +163,53 @@ const Auth = ({ visible, onClose }) => {
                   placeholder="Password"
                   className="border rounded px-3 py-2"
                   required
+                  value={signupData.password}
+                  onChange={(e) =>
+                    setSignupData({ ...signupData, password: e.target.value })
+                  }
                 />
                 <input
                   type="password"
                   placeholder="Confirm Password"
                   className="border rounded px-3 py-2"
                   required
+                  value={signupData.confirmPassword}
+                  onChange={(e) =>
+                    setSignupData({
+                      ...signupData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
                 />
                 <div className="flex flex-col gap-2">
                   <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" className="accent-black" />
+                    <input
+                      type="checkbox"
+                      className="accent-black"
+                      checked={signupData.subscribe || false}
+                      onChange={(e) =>
+                        setSignupData({
+                          ...signupData,
+                          subscribe: e.target.checked,
+                        })
+                      }
+                    />
                     Subscribe to our newsletter
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" className="accent-black" required />I
-                    accept the{" "}
+                    <input
+                      type="checkbox"
+                      className="accent-black"
+                      required
+                      checked={signupData.accepted}
+                      onChange={(e) =>
+                        setSignupData({
+                          ...signupData,
+                          accepted: e.target.checked,
+                        })
+                      }
+                    />
+                    I accept the{" "}
                     <a href="#" className="underline">
                       terms of service
                     </a>{" "}
@@ -154,12 +219,29 @@ const Auth = ({ visible, onClose }) => {
                     </a>
                   </label>
                 </div>
-                <button
-                  type="submit"
-                  className="bg-black text-white font-semibold py-2 rounded"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="!bg-black !text-white !border-none !font-semibold !py-2 !rounded"
+                  disabled={
+                    !(
+                      signupData.email &&
+                      signupData.firstName &&
+                      signupData.lastName &&
+                      signupData.password &&
+                      signupData.confirmPassword &&
+                      signupData.accepted &&
+                      signupData.password === signupData.confirmPassword
+                    )
+                  }
+                  style={{
+                    backgroundColor: "black",
+                    color: "white",
+                    border: "none",
+                  }}
                 >
                   Sign Up
-                </button>
+                </Button>
               </form>
             )}
           </div>
