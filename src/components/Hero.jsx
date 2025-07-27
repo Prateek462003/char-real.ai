@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import Auth from "./Auth";
 import { Button } from "antd";
 
 const Hero = () => {
+  const [authVisible, setAuthVisible] = useState(false);
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background Video */}
@@ -27,6 +30,7 @@ const Hero = () => {
             type="primary"
             className="!bg-[#fffc54] !text-black"
             size="large"
+            onClick={() => setAuthVisible(true)}
           >
             Login / Sign Up
           </Button>
@@ -55,6 +59,7 @@ const Hero = () => {
           Start Chatting now
         </Button>
       </div>
+      <Auth visible={authVisible} onClose={() => setAuthVisible(false)} />
     </div>
   );
 };

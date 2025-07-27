@@ -1,9 +1,13 @@
 import React from "react";
 import Hero from "../components/Hero";
 import TryAI from "../components/TryAI";
+import Welcome from "./Welcome";
 
 const Home = () => {
-  return (
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  return isLoggedIn ? (
+    <Welcome />
+  ) : (
     <>
       <Hero />
       <TryAI />
